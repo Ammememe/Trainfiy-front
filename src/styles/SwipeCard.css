@@ -1,0 +1,179 @@
+/* General Swipe Container */
+.swipe-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  background-color: #f0f0f0; /* Light gray background */
+  padding: 20px;
+  overflow: hidden; /* Ensure swiped cards don't expand layout */
+}
+
+/* Card Stack */
+.card-stack {
+  width: 100%;
+  max-width: 400px;
+  height: 500px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden; /* Prevent overflow from swiped cards */
+}
+
+/* Swipe Card */
+.swipe-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.3s ease-out, opacity 0.2s ease-out; /* Smooth swipe */
+}
+
+/* My Workout Section */
+.my-workout-section {
+  text-align: center;
+  padding: 20px;
+  background-color: #e5e5e5; /* Slightly darker gray for contrast */
+  border-radius: 10px;
+  width: 90%;
+  max-width: 800px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Heading for My Workout section */
+.my-workout-section h2 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Saved Workout Cards */
+.my-workout-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Individual saved workout card */
+.my-workout-card {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 180px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.my-workout-image {
+  height: 100px;
+  width: 100%;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 10px;
+}
+
+.my-workout-info {
+  font-size: 0.9em;
+}
+
+.my-workout-title {
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 5px;
+}
+
+.my-workout-target,
+.my-workout-equipment {
+  font-size: 0.8em;
+  color: #555;
+}
+
+/* Responsive Styles */
+
+/* Tablet View */
+@media (max-width: 768px) {
+  .card-stack {
+    width: 100%;
+    height: 450px;
+  }
+
+  .swipe-card {
+    height: 450px;
+    max-width: 90%;
+  }
+
+  .button-container button {
+    font-size: 20px;
+  }
+
+  .my-workout-section h2 {
+    font-size: 1.6em;
+  }
+
+  .my-workout-card {
+    width: 130px;
+  }
+
+  .workout-title {
+    font-size: 22px;
+  }
+
+  .workout-description,
+  .workout-equipment {
+    font-size: 14px;
+  }
+}
+
+/* Mobile View */
+@media (max-width: 480px) {
+  .swipe-container {
+    height: auto;
+    padding: 10px;
+  }
+
+  .card-stack {
+    width: 100%;
+    height: 400px;
+  }
+
+  .swipe-card {
+    height: 400px;
+    max-width: 100%;
+  }
+
+  .button-container button {
+    font-size: 18px;
+  }
+
+  .my-workout-section {
+    padding: 15px;
+  }
+
+  .my-workout-section h2 {
+    font-size: 1.4em;
+  }
+
+  .my-workout-card {
+    width: 100px;
+  }
+
+  .workout-title {
+    font-size: 20px;
+  }
+
+  .workout-description,
+  .workout-equipment {
+    font-size: 13px;
+  }
+}

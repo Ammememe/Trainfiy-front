@@ -1,0 +1,116 @@
+/* Container for video background and content */
+.muscle-group-selector {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+}
+
+/* Background videos */
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Place behind content */
+}
+
+/* Dark overlay to enhance text visibility */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 50% dark overlay */
+    z-index: -1;
+}
+
+.background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* Foreground content */
+.content {
+    z-index: 1;
+    padding: 20px;
+    margin-top: -30px; /* Move entire content section up */
+}
+
+.content h1 {
+    font-size: 3em;
+    color: whitesmoke;
+    margin-top: 0;
+    margin-bottom: 50px; /* Increase space below the main title */
+}
+
+.content h2 {
+    font-size: 1.5em;
+    color: whitesmoke;
+    margin: px 0; /* Adjust margins for closer spacing between h2 elements */
+}
+
+.muscle-group-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.muscle-group-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.muscle-group-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Adjust font sizes for smaller screens */
+@media (max-width: 768px) {
+    .content h1 {
+        font-size: 2em;
+    }
+    .content h2 {
+        font-size: 1.2em;
+    }
+    .muscle-group-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content h1 {
+        font-size: 1.8em;
+    }
+    .content h2 {
+        font-size: 1em;
+    }
+    .muscle-group-button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}

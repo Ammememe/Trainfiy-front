@@ -1,0 +1,76 @@
+/* Navbar Container */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Distribute space between items */
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 50%; /* Position relative to the center of the screen */
+    transform: translateX(-50%); /* Center-align by shifting half its width */
+    max-width: 800px; /* Limit width to avoid stretching across entire screen */
+    width: 100%;
+    color: white;
+    z-index: 10;
+    
+}
+
+/* Logo styling */
+.navbar-logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Link styling */
+.navbar-links {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar-link {
+    font-size: 1em;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.navbar-link:hover {
+    color: #ccc; /* Optional: Lighten color on hover */
+}
+
+/* Mobile hamburger menu */
+.navbar-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 10px;
+        border-radius: 8px;
+    }
+    .navbar-links.open {
+        display: flex;
+    }
+
+    .navbar-toggle {
+        display: block;
+        cursor: pointer;
+    }
+
+    .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 4px;
+        background-color: white;
+    }
+}
