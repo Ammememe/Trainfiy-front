@@ -1,23 +1,38 @@
-/* src/styles/Login.css */
-.login-container {
+/* Wrapper to center the login container */
+.page-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    background-color: #f0f0f0; /* Light background to contrast with the login box */
+}
+
+/* Container styling for two-column layout */
+.login-container {
+    display: flex;
+    max-width: 800px;
     background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Left side (login form) */
+.login-form-container {
+    padding: 30px;
+    width: 60%;
 }
 
 h2 {
-    font-size: 2em;
+    font-size: 1.8em;
     color: #333;
+    margin-bottom: 15px;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 300px;
 }
 
 .login-form input {
@@ -27,7 +42,7 @@ h2 {
     border-radius: 5px;
 }
 
-.login-form button {
+.login-button {
     padding: 10px;
     font-size: 1em;
     color: white;
@@ -37,6 +52,102 @@ h2 {
     cursor: pointer;
 }
 
-.login-form button:hover {
+.signup-button {
+    padding: 10px;
+    font-size: 1em;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover {
     background-color: #0056b3;
+}
+
+.signup-button:hover {
+    background-color: #218838;
+}
+
+.forgot-password {
+    color: #007bff;
+    font-size: 0.9em;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Right side (signup prompt) */
+.side-panel {
+    width: 40%;
+    padding: 30px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.side-panel h3 {
+    font-size: 1.6em;
+    margin-bottom: 10px;
+}
+
+.side-panel p {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.side-panel ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+.side-panel ul li {
+    margin-bottom: 5px;
+}
+
+.create-account-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.create-account-button:hover {
+    background-color: #218838;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        max-width: 90%;
+    }
+
+    .login-form-container,
+    .side-panel {
+        width: 100%;
+    }
+
+    .side-panel {
+        text-align: center;
+        align-items: center;
+    }
+
+    .side-panel ul {
+        margin-left: 0;
+    }
 }

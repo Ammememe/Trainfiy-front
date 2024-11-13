@@ -49,30 +49,44 @@
 .content {
     z-index: 1;
     padding: 20px;
-    margin-top: -30px; /* Move entire content section up */
+    margin-top: -30px;
+}
+
+.content h1, .content h2 {
+    color: whitesmoke;
+    margin: 0;
 }
 
 .content h1 {
     font-size: 3em;
-    color: whitesmoke;
-    margin-top: 0;
-    margin-bottom: 50px; /* Increase space below the main title */
+    margin-bottom: 50px;
 }
 
 .content h2 {
     font-size: 1.5em;
-    color: whitesmoke;
-    margin: px 0; /* Adjust margins for closer spacing between h2 elements */
+}
+/* Soft fade-in effect */
+/* Initial hidden state */
+.hidden {
+    opacity: 0;
 }
 
-.muscle-group-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
+/* Smooth fade-in effect */
+.fade-in {
+    opacity: 1;
+    transition: opacity 2s ease-in; /* Longer duration for softer fade-in */
+    transition-delay: 0.2s; /* Slight delay for smoother effect */
 }
 
+/* Smooth fade-out effect */
+.fade-out {
+    opacity: 0;
+    transition: opacity 2s ease-out; /* Longer duration for softer fade-out */
+}
+
+
+/* Button styles */
+.level-button,
 .muscle-group-button {
     padding: 10px 20px;
     font-size: 16px;
@@ -84,11 +98,17 @@
     transition: background-color 0.3s;
 }
 
+.level-button.active {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+}
+
+.level-button:hover,
 .muscle-group-button:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Adjust font sizes for smaller screens */
+/* Layout adjustments for smaller screens */
 @media (max-width: 768px) {
     .content h1 {
         font-size: 2em;
@@ -96,6 +116,7 @@
     .content h2 {
         font-size: 1.2em;
     }
+    .level-button,
     .muscle-group-button {
         font-size: 14px;
         padding: 8px 16px;
@@ -109,6 +130,7 @@
     .content h2 {
         font-size: 1em;
     }
+    .level-button,
     .muscle-group-button {
         font-size: 12px;
         padding: 6px 12px;

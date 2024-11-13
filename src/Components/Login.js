@@ -48,60 +48,77 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div className="login-container">
-            <h2>{isLogin ? 'Login to Workout App' : 'Sign Up for Workout App'}</h2>
-            <form onSubmit={handleSubmit} className="login-form">
-                {!isLogin && (
-                    <>
+        <div className="page-container">
+            <div className="login-container">
+                <div className="login-form-container">
+                    <h2>{isLogin ? 'Login to Your Account' : 'Sign Up for Workout App'}</h2>
+                    <form onSubmit={handleSubmit} className="login-form">
+                        {!isLogin && (
+                            <>
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    placeholder="First Name"
+                                    value={formData.firstname}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="lastname"
+                                    placeholder="Last Name"
+                                    value={formData.lastname}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
                         <input
-                            type="text"
-                            name="firstname"
-                            placeholder="First Name"
-                            value={formData.firstname}
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
                             onChange={handleChange}
                             required
                         />
                         <input
-                            type="text"
-                            name="lastname"
-                            placeholder="Last Name"
-                            value={formData.lastname}
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
                             onChange={handleChange}
                             required
                         />
-                    </>
-                )}
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
-                {!isLogin && (
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        required
-                    />
-                )}
-                <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
-            </form>
-            <button className="toggle-button" onClick={() => setIsLogin(!isLogin)}>
-                {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Log In"}
-            </button>
+                        {!isLogin && (
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                placeholder="Confirm Password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                required
+                            />
+                        )}
+                        <button type="submit" className={isLogin ? 'login-button' : 'signup-button'}>
+                            {isLogin ? 'Login' : 'Sign Up'}
+                        </button>
+                    </form>
+                    {isLogin && <a href="/forgot-password" className="forgot-password">Forgot your password?</a>}
+                </div>
+                <div className="side-panel">
+                    <h3>Don't Have an Account?</h3>
+                    <p>Create a <strong>FREE</strong> account and enjoy the following benefits:</p>
+                    <ul>
+                        <li>Access to workout plans</li>
+                        <li>Personalized recommendations</li>
+                        <li>Progress tracking</li>
+                        <li>Exclusive content</li>
+                    </ul>
+                    <button className="create-account-button" onClick={() => setIsLogin(false)}>
+                        Create an Account
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
