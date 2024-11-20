@@ -10,7 +10,6 @@
     color: #fff;
     text-align: center;
 }
-
 /* Background videos */
 .video-background {
     position: absolute;
@@ -19,9 +18,8 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: -1; /* Place behind content */
+    z-index: 0; /* Changed from -1 to 0 */
 }
-
 /* Dark overlay to enhance text visibility */
 .video-overlay {
     position: absolute;
@@ -29,10 +27,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* 50% dark overlay */
-    z-index: -1;
+    background: rgba(0, 0, 0, 0.75); /* Made darker (75% opacity) */
+    z-index: 1; /* Changed from -1 to 1 */
 }
-
 .background-video {
     position: absolute;
     top: 50%;
@@ -43,25 +40,23 @@
     transform: translate(-50%, -50%);
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    filter: brightness(0.7); /* Added brightness filter */
 }
-
 /* Foreground content */
 .content {
-    z-index: 1;
+    position: relative;
+    z-index: 2; /* Increased z-index to be above overlay */
     padding: 20px;
     margin-top: -30px;
 }
-
 .content h1, .content h2 {
     color: whitesmoke;
     margin: 0;
 }
-
 .content h1 {
     font-size: 3em;
     margin-bottom: 50px;
 }
-
 .content h2 {
     font-size: 1.5em;
 }
@@ -70,18 +65,17 @@
 .hidden {
     opacity: 0;
 }
-
 /* Smooth fade-in effect */
 .fade-in {
     opacity: 1;
-    transition: opacity 2s ease-in; /* Longer duration for softer fade-in */
-    transition-delay: 0.2s; /* Slight delay for smoother effect */
+    transition: opacity 0.2s ease-in; /* Longer duration for softer fade-in */
+    transition-delay: 0.1s; /* Slight delay for smoother effect */
 }
-
 /* Smooth fade-out effect */
 .fade-out {
     opacity: 0;
-    transition: opacity 2s ease-out; /* Longer duration for softer fade-out */
+    transition: opacity 0.2s ease-out; /* Longer duration for softer fade-out */
+    pointer-events: none;
 }
 
 
@@ -97,17 +91,14 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 .level-button.active {
     background-color: rgba(255, 255, 255, 0.5);
     color: black;
 }
-
 .level-button:hover,
 .muscle-group-button:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
-
 /* Layout adjustments for smaller screens */
 @media (max-width: 768px) {
     .content h1 {
@@ -122,7 +113,6 @@
         padding: 8px 16px;
     }
 }
-
 @media (max-width: 480px) {
     .content h1 {
         font-size: 1.8em;

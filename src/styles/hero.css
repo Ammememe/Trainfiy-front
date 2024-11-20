@@ -1,0 +1,32 @@
+.hero-section {
+    padding: 8rem 2rem;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/gym1.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4rem;
+  }
+  
+  .logo-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .app-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #9b87f5, #7E69AB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .app-subtitle {
+    font-size: 1.5rem;
+    color: #D6BCFA;
+    margin-bottom: 2rem;
+  }

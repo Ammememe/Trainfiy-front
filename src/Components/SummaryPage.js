@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
+import TinderCard from 'react-tinder-card';
+import { ArrowRight, Dumbbell, Heart, Brain } from 'lucide-react';
 import '../styles/SummaryPage.css';
+import { Check, X, RotateCcw } from 'lucide-react';
+import TimerAnimation from './TimerAnimation.tsx';
 
 const SummaryPage = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const cardRef = useRef(null);
-  const startXRef = useRef(0);
-  const currentXRef = useRef(0);
-
-  const SWIPE_THRESHOLD = 150;
+  const [currentIndex, setCurrentIndex] = useState(2);
+  const currentIndexRef = useRef(currentIndex);
+  
   const summarySlides = [
     {
       id: 1,
@@ -26,117 +26,149 @@ const SummaryPage = () => {
       text: "Create your perfect workout in seconds"
     }
   ];
-
-  const handleSwipeEnd = (direction) => {
-    const newIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1;
-    if (newIndex >= 0 && newIndex < summarySlides.length) {
-      setCurrentIndex(newIndex);
-      resetCardPosition();
-    }
+  const updateCurrentIndex = (val) => {
+    setCurrentIndex(val);
+    currentIndexRef.current = val;
   };
-
-  const resetCardPosition = () => {
-    if (cardRef.current) {
-      cardRef.current.style.transition = 'transform 0.3s ease-out';
-      cardRef.current.style.transform = 'translateX(0) rotate(0deg)';
-    }
+  const canGoBack = currentIndex < summarySlides.length - 1;
+  const canSwipe = currentIndex >= 0;
+  const swiped = (direction, index) => {
+    updateCurrentIndex(index - 1);
   };
-
-  const simulateSwipe = (direction) => {
-    // Prevent right swipe on the last slide
-    if (direction === 'right' && currentIndex === summarySlides.length - 1) {
-      return;
-    }
-    if (cardRef.current) {
-      cardRef.current.style.transition = 'transform 0.5s ease-out';
-      const distance = direction === 'right' ? 500 : -500;
-      cardRef.current.style.transform = `translateX(${distance}px) rotate(${direction === 'right' ? 30 : -30}deg)`;
-
-      setTimeout(() => handleSwipeEnd(direction), 500);
-    }
+  const outOfFrame = (idx) => {
+    currentIndexRef.current >= idx && updateCurrentIndex(idx - 1);
   };
-
-  const onMouseDown = (e) => {
-    setIsDragging(true);
-    startXRef.current = e.clientX;
-    if (cardRef.current) {
-      cardRef.current.style.transition = 'none';
-    }
-  };
-
-  const onMouseMove = (e) => {
-    if (!isDragging) return;
-    
-    const deltaX = e.clientX - startXRef.current;
-    if (cardRef.current) {
-      const constrainedDeltaX = Math.max(Math.min(deltaX, SWIPE_THRESHOLD), -SWIPE_THRESHOLD);
-      cardRef.current.style.transform = `translateX(${constrainedDeltaX}px) rotate(${constrainedDeltaX / 10}deg)`;
-    }
-  };
-
-  const onMouseUp = (e) => {
-    if (e && typeof e.clientX === 'number') {
-      setIsDragging(false);
-      const deltaX = e.clientX - startXRef.current;
-
-      // Prevent right swipe on the last slide
-      if (deltaX > 0 && currentIndex === summarySlides.length - 1) {
-        resetCardPosition();
-        return;
+  const swipe = async (dir) => {
+    if (canSwipe && currentIndex < summarySlides.length) {
+      const ref = childRefs[currentIndex].current;
+      if (ref) {
+        await ref.swipe(dir);
       }
-
-      if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
-        const direction = deltaX > 0 ? 'right' : 'left';
-        simulateSwipe(direction);
-      } else {
-        resetCardPosition();
-      }
-    } else {
-      resetCardPosition();
     }
   };
-
-  const onMouseLeave = (e) => {
-    if (isDragging) onMouseUp(e);
+  const goBack = async () => {
+    if (!canGoBack) return;
+    const newIndex = currentIndex + 1;
+    updateCurrentIndex(newIndex);
+    const ref = childRefs[newIndex].current;
+    if (ref) {
+      await ref.restoreCard();
+    }
   };
-
+  const childRefs = useMemo(
+    () =>
+      Array(summarySlides.length)
+        .fill(0)
+        .map(() => React.createRef()),
+    []
+  );
+  const handleDragStart = (e) => {
+    e.preventDefault();
+    return false;
+  };
   return (
     <div className="summary-container">
-      <h1 className="summary-title">Welcome to FitSwipe</h1>
+      <div className="hero-section">
+        <div className="logo-container">
+          <h1 className="app-title">FitSwipe</h1>
+          <p className="app-subtitle">Working out made simple and easy</p>
+        </div>
+      </div>
 
-      <div className="card-stack">
-        <div
-          ref={cardRef}
-          className="swipe-card"
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseLeave}
-        >
-          <img
-            src={summarySlides[currentIndex].gifUrl}
-            alt={`Summary slide ${currentIndex + 1}`}
-            className="card-image"
-            draggable="false"
-          />
-          <div className="summary-text-overlay">
-            {summarySlides[currentIndex].text}
+      <div className="features-section">
+        <div className="feature-card">
+          <div className="feature-icon">
+            <Dumbbell className="icon" />
+          </div>
+          <h3>Personalized Workouts</h3>
+          <p>Choose from over 500 exercises with high-quality animations</p>
+        </div>
+        <div className="feature-card">
+          <div className="feature-icon">
+            <Heart className="icon" />
+          </div>
+          <h3>Track Progress</h3>
+          <p>Monitor your fitness journey and celebrate achievements</p>
+        </div>
+        <div className="feature-card">
+          <div className="feature-icon">
+            <Brain className="icon" />
+          </div>
+          <h3>Smart Recommendations</h3>
+          <p>Get workout suggestions based on your goals and level</p>
+        </div>
+      </div>
+
+      <div className="demo-section">
+        <h2 className="demo-title">How It Works</h2>
+        <div className="demo-content">
+          <div className="swipe-section">
+            <div className="card-stack">
+              {summarySlides.map((slide, index) => (
+                <TinderCard
+                  ref={childRefs[index]}
+                  key={slide.id}
+                  onSwipe={(dir) => swiped(dir, index)}
+                  onCardLeftScreen={() => outOfFrame(index)}
+                  preventSwipe={['up', 'down']}
+                  className="swipe-card"
+                >
+                  <img
+                    src={slide.gifUrl}
+                    alt={`Summary slide ${index + 1}`}
+                    className="card-image"
+                    draggable="false"
+                    onDragStart={handleDragStart}
+                  />
+                  <div className="summary-text-overlay">
+                    {slide.text}
+                  </div>
+                </TinderCard>
+              ))}
+            </div>
+            
+            <div className="button-container">
+              <button 
+                onClick={() => swipe('left')} 
+                disabled={!canSwipe}
+                className="action-button reject"
+              >
+                <X size={24} />
+              </button>
+              <button 
+                onClick={() => goBack()} 
+                disabled={!canGoBack}
+                className="action-button rewind"
+              >
+                <RotateCcw size={24} />
+              </button>
+              <button 
+                onClick={() => swipe('right')} 
+                disabled={!canSwipe}
+                className="action-button accept"
+              >
+                <Check size={24} />
+              </button>
+            </div>
+          </div>
+
+          <div className="demo-info">
+            <h3>Customize Your Workout Time</h3>
+            <p>Choose how long you want to work out and get personalized recommendations</p>
+            <TimerAnimation />
           </div>
         </div>
       </div>
 
-      <div className="button-container">
-        <button onClick={() => simulateSwipe('left')} disabled={currentIndex === 0}>
-          👈
-        </button>
-        <button onClick={() => simulateSwipe('right')} disabled={currentIndex === summarySlides.length - 1}>
-          👉
+      <div className="cta-section">
+        <h2>Ready to start your fitness journey?</h2>
+        <button 
+          className="signin-button" 
+          onClick={() => (window.location.href = '/login')}
+        >
+          Get Started <ArrowRight className="arrow-icon" />
         </button>
       </div>
-
-      <button className="signin-button" onClick={() => (window.location.href = '/login')}>
-        Sign In
-      </button>
     </div>
   );
 };

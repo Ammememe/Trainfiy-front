@@ -1,47 +1,49 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
+import axios from 'axios';
 import '../styles/SwipeCard.css';
-
 const SwipeCard = ({ workouts }) => {
     const [currentIndex, setCurrentIndex] = useState(workouts ? workouts.length - 1 : 0);
     const [dailyRoutine, setDailyRoutine] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [instructions, setInstructions] = useState({}); // Store instructions for workouts
+    const [isInstructionsExpanded, setIsInstructionsExpanded] = useState(false); // Add this new state for instructions expansion
     const alreadyRemoved = useRef([]);
     const currentCardRef = useRef();
-
-    // Conditional rendering if workouts prop is undefined or empty
+    
+    useEffect(() => {
+        // Pre-fetch instructions for all workouts on mount
+        workouts.forEach((workout) => {
+            fetchInstructions(workout.id);
+        });
+    }, [workouts]);
     if (!workouts || workouts.length === 0) {
         console.error('workouts prop is undefined or empty');
         return <div>No workouts available. Please try again later.</div>;
     }
-
     const handleSwipe = (direction, workout) => {
         if (direction === 'right') {
             setDailyRoutine((prevRoutine) => [...prevRoutine, workout]);
         }
         setCurrentImageIndex(0);
+        setIsInstructionsExpanded(false); // Reset instructions expansion state after swipe
     };
-
     const handleCardLeftScreen = (index) => {
         alreadyRemoved.current.push(workouts[index]);
         setCurrentIndex((prev) => (prev > 0 ? prev - 1 : workouts.length - 1));
     };
-
     const swipe = (direction) => {
         if (currentCardRef.current) {
             currentCardRef.current.swipe(direction);
         }
     };
-
     const getFormattedImageUrl = (path) => {
         return path.replace(/\\/g, '/').toLowerCase().replace(/ /g, '_');
     };
-
     const getFallbackImageUrl = (workout, index) => {
         const workoutName = workout.name.replace(/ /g, '_');
         return `http://localhost:8080/images/${workoutName}/images/${index}.jpg`;
     };
-
     const handleImageSwitch = (direction) => {
         setCurrentImageIndex((prevIndex) => {
             const totalImages = workouts[currentIndex]?.image_paths?.length || 2; // Default to 2 images
@@ -52,7 +54,23 @@ const SwipeCard = ({ workouts }) => {
             }
         });
     };
-
+    const fetchInstructions = async (workoutId) => {
+        try {
+            if (instructions[workoutId]) return; // Skip if instructions are already fetched
+            const response = await axios.get(`http://localhost:8080/instructions/${workoutId}`);
+            const fetchedInstructions = response.data.instructions;
+            setInstructions((prev) => ({
+                ...prev,
+                [workoutId]: fetchedInstructions || 'No instructions available.',
+            }));
+        } catch (error) {
+            console.error('Error fetching instructions:', error);
+            setInstructions((prev) => ({
+                ...prev,
+                [workoutId]: 'Failed to load instructions.',
+            }));
+        }
+    };
     return (
         <div className="swipe-container">
             <div className="card-stack">
@@ -77,14 +95,25 @@ const SwipeCard = ({ workouts }) => {
                                         backgroundImage: workout.image_paths && workout.image_paths[currentImageIndex]
                                             ? `url(${getFormattedImageUrl(workout.image_paths[currentImageIndex])})`
                                             : `url(${getFallbackImageUrl(workout, currentImageIndex)})`,
-                                        backgroundSize: 'cover',
-                                        height: '290px',
-                                        width: '290px',
                                     }}
-                                ></div>
+                                />
                                 <div className="workout-title">{workout.name}</div>
                                 <div className="workout-description">Target: {workout.target}</div>
                                 <div className="workout-equipment">Equipment: {workout.equipment}</div>
+                                <div className="instructions-section">
+                                    <div 
+                                        className="instructions-title"
+                                        onClick={() => setIsInstructionsExpanded(!isInstructionsExpanded)}
+                                    >
+                                        <span>Instructions</span>
+                                        <span>{isInstructionsExpanded ? '▼' : '▶'}</span>
+                                    </div>
+                                    <div className={`instructions-box ${isInstructionsExpanded ? 'expanded' : 'collapsed'}`}>
+                                        <p className="instructions-content">
+                                            {instructions[workout.id] || 'Loading...'}
+                                        </p>
+                                    </div>
+                                </div>
                                 <div className="button-container">
                                     <button onClick={() => swipe('left')}>👎</button>
                                     <button onClick={() => swipe('right')}>👍</button>
@@ -110,7 +139,6 @@ const SwipeCard = ({ workouts }) => {
                                 ></div>
                                 <div className="my-workout-info">
                                     <div className="my-workout-title">{workout.name}</div>
-                                    <div className="my-workout-target">Target: {workout.target}</div>
                                     <div className="my-workout-equipment">Equipment: {workout.equipment}</div>
                                 </div>
                             </div>
@@ -123,5 +151,4 @@ const SwipeCard = ({ workouts }) => {
         </div>
     );
 };
-
 export default SwipeCard;
