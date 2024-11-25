@@ -1,0 +1,86 @@
+.demo-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--bg-primary);
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+.demo-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--text-primary);
+}
+
+.demo-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+.swipe-section, .demo-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: 450px;
+  height: 600px;
+}
+
+.demo-info h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.demo-info p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  max-width: 80%;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.button-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button-container button {
+  padding: 8px 16px;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.button-container button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .demo-content {
+    grid-template-columns: 1fr;
+  }
+
+  .swipe-section, .demo-info {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+}

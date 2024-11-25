@@ -1,9 +1,25 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import { ArrowRight, Dumbbell, Heart, Brain } from 'lucide-react';
 import '../styles/SummaryPage.css';
 import { Check, X, RotateCcw } from 'lucide-react';
 import TimerAnimation from './TimerAnimation.tsx';
+import Carousel from './Carousel.tsx';
+
+
+
+
+
+
+
+
+const fitnessImages = [
+  "/public/gym1.jpg",
+  "/public/gym1.jpg",
+  "/public/gym1.jpg",
+  "/public/gym1.jpg",
+  "/public/gym1.jpg",
+];
 
 const SummaryPage = () => {
   const [currentIndex, setCurrentIndex] = useState(2);
@@ -66,6 +82,18 @@ const SummaryPage = () => {
     e.preventDefault();
     return false;
   };
+  const [api, setApi] = React.useState();
+  
+  useEffect(() => {
+    if (!api) return;
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 3000); // Scroll every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [api]);
+
   return (
     <div className="summary-container">
       <div className="hero-section">
@@ -78,6 +106,7 @@ const SummaryPage = () => {
       <div className="features-section">
         <div className="feature-card">
           <div className="feature-icon">
+          
             <Dumbbell className="icon" />
           </div>
           <h3>Personalized Workouts</h3>
@@ -159,16 +188,11 @@ const SummaryPage = () => {
           </div>
         </div>
       </div>
-
-      <div className="cta-section">
-        <h2>Ready to start your fitness journey?</h2>
-        <button 
-          className="signin-button" 
-          onClick={() => (window.location.href = '/login')}
-        >
-          Get Started <ArrowRight className="arrow-icon" />
-        </button>
-      </div>
+      <div className="cta-section" style={{ backgroundColor: '#f3f3f3' }}>
+  <h2>Ready to start your fitness journey?</h2>
+  
+  <Carousel />
+</div>
     </div>
   );
 };

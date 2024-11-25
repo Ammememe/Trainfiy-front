@@ -1,0 +1,42 @@
+.cta-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #f1f1f1 !important; /* Ensures the background color is applied */
+  border-radius: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  max-width: 1200px; /* Sets the maximum width */
+  margin: 0 auto; /* Centers the section horizontally and removes vertical margins */
+}
+
+.cta-section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.signin-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  background: var(--button-black); /* Black button for prominence */
+  color: var(--gray-light); /* Light gray text for contrast */
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.signin-button:hover {
+  transform: translateY(-2px);
+  background: var(--button-hover); /* Slightly lighter black for hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+}
+
+.arrow-icon {
+  width: 20px;
+  height: 20px;
+  filter: invert(100%); /* Ensures arrow is white on a black button */
+}

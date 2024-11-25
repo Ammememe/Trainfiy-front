@@ -15,8 +15,9 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
     const videoRefs = useRef([]);
     const navigate = useNavigate();
     const [selectedLevel, setSelectedLevel] = useState(null);
-    const [showLevelSelection, setShowLevelSelection] = useState(true);
-    const [showMuscleGroupSelection, setShowMuscleGroupSelection] = useState(false);
+    const [selectedBodyPart, setSelectedBodyPart] = useState(null);
+    const [showTimer, setShowTimer] = useState(false);
+    const [workoutDuration, setWorkoutDuration] = useState(30);
 
     useEffect(() => {
         let currentIndex = 0;
@@ -38,14 +39,6 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
     const handleLevelSelect = (level) => {
         setSelectedLevel(level);
         onSelectLevel(level);
-        
-        // First fade out level selection
-        setShowLevelSelection(false);
-        
-        // Wait for level selection to fade out before showing muscle groups
-        setTimeout(() => {
-            setShowMuscleGroupSelection(true);
-        }, 500); // Match this with the CSS transition duration
     };
 
     const handleBodyPartSelect = (bodyPart) => {
@@ -53,36 +46,43 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
             alert("Please select a level first!");
             return;
         }
+        setSelectedBodyPart(bodyPart);
         onSelectBodyPart(bodyPart);
+        setShowTimer(true);
+    };
+
+    const handleSeeWorkouts = () => {
         navigate("/swipe");
     };
 
     return (
-        <div className="muscle-group-selector">
-            <div className="video-background">
-                <div className="video-overlay"></div>
-                {videos.map((src, index) => (
-                    <video
-                        key={index}
-                        ref={(el) => (videoRefs.current[index] = el)}
-                        src={src}
-                        className="background-video"
-                        muted
-                        loop={false}
-                        playsInline
-                    />
-                ))}
+        <div>
+            <div className="video-banner">
+                <div className="video-background">
+                    <div className="video-overlay"></div>
+                    {videos.map((src, index) => (
+                        <video
+                            key={index}
+                            ref={(el) => (videoRefs.current[index] = el)}
+                            src={src}
+                            className="background-video"
+                            muted
+                            loop={false}
+                            playsInline
+                        />
+                    ))}
+                </div>
             </div>
 
-            <div className="content">
-                <div className={`level-selection ${showLevelSelection ? "fade-in" : "fade-out"}`}>
-                    <h1>Choose Level</h1>
-                    <div className="level-buttons">
+            <div className="selection-container">
+                <div className="selection-section">
+                    <h2>Choose Your Level</h2>
+                    <div className="button-grid">
                         {levels.map((level) => (
-                            <button 
-                                key={level} 
+                            <button
+                                key={level}
                                 onClick={() => handleLevelSelect(level)}
-                                className={`level-button ${selectedLevel === level ? "active" : ""}`}
+                                className={`selection-button ${selectedLevel === level ? 'active' : ''}`}
                             >
                                 {level.charAt(0).toUpperCase() + level.slice(1)}
                             </button>
@@ -90,20 +90,47 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
                     </div>
                 </div>
 
-                <div className={`muscle-group-selection ${showMuscleGroupSelection ? "fade-in" : "fade-out"}`}>
-                    <h1>Choose Muscle Group</h1>
-                    <div className="muscle-group-buttons">
+                <div className="selection-section">
+                    <h2>Choose Muscle Group</h2>
+                    <div className="button-grid">
                         {bodyParts.map((bodyPart) => (
-                            <button 
-                                key={bodyPart} 
+                            <button
+                                key={bodyPart}
                                 onClick={() => handleBodyPartSelect(bodyPart)}
-                                className="muscle-group-button"
+                                className={`selection-button ${selectedBodyPart === bodyPart ? 'active' : ''}`}
                             >
                                 {bodyPart === "all" ? "All Exercises" : bodyPart.charAt(0).toUpperCase() + bodyPart.slice(1)}
                             </button>
                         ))}
                     </div>
                 </div>
+
+                <div className={`timer-section ${showTimer ? 'show' : ''}`}>
+                    <h2>Choose Workout Length</h2>
+                    <div className="slider-container">
+                        <input
+                            type="range"
+                            min="5"
+                            max="120"
+                            step="5"
+                            value={workoutDuration}
+                            onChange={(e) => setWorkoutDuration(Number(e.target.value))}
+                            className="slider"
+                        />
+                        <p>Workout Duration: {workoutDuration} minutes</p>
+                    </div>
+                </div>
+
+                {showTimer && (
+                    <div className="see-workouts-container">
+                        <button
+                            onClick={handleSeeWorkouts}
+                            className="see-workouts-button"
+                        >
+                            See Workouts
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

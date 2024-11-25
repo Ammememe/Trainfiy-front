@@ -1,128 +1,238 @@
-/* Container for video background and content */
-.muscle-group-selector {
+.video-banner {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 300px;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    text-align: center;
 }
-/* Background videos */
+
 .video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    z-index: 0; /* Changed from -1 to 0 */
 }
-/* Dark overlay to enhance text visibility */
+
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75); /* Made darker (75% opacity) */
-    z-index: 1; /* Changed from -1 to 1 */
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
 }
+
 .background-video {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     transform: translate(-50%, -50%);
     opacity: 0;
     transition: opacity 1s ease-in-out;
-    filter: brightness(0.7); /* Added brightness filter */
 }
-/* Foreground content */
-.content {
-    position: relative;
-    z-index: 2; /* Increased z-index to be above overlay */
-    padding: 20px;
-    margin-top: -30px;
+
+/* Main container styles */
+.selection-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
 }
-.content h1, .content h2 {
-    color: whitesmoke;
-    margin: 0;
+
+/* Selection sections */
+.selection-section {
+    margin-bottom: 2rem;
 }
-.content h1 {
-    font-size: 3em;
-    margin-bottom: 50px;
+
+.selection-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #333;
 }
-.content h2 {
-    font-size: 1.5em;
+
+/* Button grid */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
 }
-/* Soft fade-in effect */
-/* Initial hidden state */
-.hidden {
+
+/* Button styles */
+.selection-button {
+    width: 100%; /* Makes buttons fill the grid cells */
+    padding: 1rem;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center; /* Ensures text is centered */
+}
+
+
+.selection-button:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.selection-button.active {
+    background-color: #6B7280;  /* Replaced purple with gray */
+    border-color: #6B7280;
+    color: white;
+}
+
+/* Timer section */
+.timer-section {
     opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
-/* Smooth fade-in effect */
+
+.timer-section.show {
+    opacity: 1;
+    height: auto;
+    margin-top: 2rem;
+}
+
+/* Slider styles */
+.slider-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.slider {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    outline: none;
+    -webkit-appearance: none;
+    margin: 1rem 0;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #4B5563;  /* Replaced purple with gray */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    background: #374151;  /* Darker gray on hover */
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: #4B5563;  /* Replaced purple with gray */
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+    background: #374151;  /* Darker gray on hover */
+    transform: scale(1.1);
+}
+
+.slider-container p {
+    text-align: center;
+    color: #333;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+/* See Workouts button */
+.see-workouts-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.see-workouts-button {
+    background-color: #4B5563;  /* Replaced purple with gray */
+    color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.see-workouts-button:hover {
+    background-color: #374151;  /* Darker gray on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.timer-section.show {
+    opacity: 1;
+    height: auto;
+    margin-top: 2rem;
+}
+
+/* Fade animations */
 .fade-in {
     opacity: 1;
-    transition: opacity 0.2s ease-in; /* Longer duration for softer fade-in */
-    transition-delay: 0.1s; /* Slight delay for smoother effect */
+    transition: opacity 0.3s ease-in;
 }
-/* Smooth fade-out effect */
+
 .fade-out {
     opacity: 0;
-    transition: opacity 0.2s ease-out; /* Longer duration for softer fade-out */
+    transition: opacity 0.3s ease-out;
     pointer-events: none;
 }
 
-
-/* Button styles */
-.level-button,
-.muscle-group-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.level-button.active {
-    background-color: rgba(255, 255, 255, 0.5);
-    color: black;
-}
-.level-button:hover,
-.muscle-group-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-/* Layout adjustments for smaller screens */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .content h1 {
-        font-size: 2em;
+    .video-banner {
+        height: 200px;
     }
-    .content h2 {
-        font-size: 1.2em;
+
+    .selection-section h2 {
+        font-size: 1.25rem;
     }
-    .level-button,
-    .muscle-group-button {
-        font-size: 14px;
-        padding: 8px 16px;
+
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Exactly 3 columns per row */
+        gap: 1rem; /* Spacing between buttons */
+        justify-items: center; /* Center-align buttons */
     }
 }
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Force 3 columns */
+    gap: 1rem; /* Space between buttons */
+    justify-items: center; /* Center align buttons */
+}
+
+@media (max-width: 768px) {
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 buttons per row on tablets */
+    }
+}
+
 @media (max-width: 480px) {
-    .content h1 {
-        font-size: 1.8em;
-    }
-    .content h2 {
-        font-size: 1em;
-    }
-    .level-button,
-    .muscle-group-button {
-        font-size: 12px;
-        padding: 6px 12px;
+    .button-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 button per row on small screens */
     }
 }
+

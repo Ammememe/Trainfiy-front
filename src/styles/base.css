@@ -1,0 +1,18 @@
+:root {
+  --bg-primary: #F5F5F7;  /* Light gray background */
+  --bg-secondary: #EAEAEC;  /* Slightly darker gray for containers */
+  --text-primary: #111827;  /* Dark text */
+  --text-secondary: #6B7280;  /* Gray text */
+  --text-white: #FFFFFF;  /* White text */
+}
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'San Francisco', 'Arial', sans-serif;
+}
+.summary-container {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
