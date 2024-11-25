@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import axios from 'axios';
 import '../styles/SwipeCard.css';
-const SwipeCard = ({ workouts }) => {
+
+const SwipeCard = ({ workouts, currentUser }) => {
     const [currentIndex, setCurrentIndex] = useState(workouts ? workouts.length - 1 : 0);
     const [dailyRoutine, setDailyRoutine] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -17,33 +18,54 @@ const SwipeCard = ({ workouts }) => {
             fetchInstructions(workout.id);
         });
     }, [workouts]);
+    
     if (!workouts || workouts.length === 0) {
         console.error('workouts prop is undefined or empty');
         return <div>No workouts available. Please try again later.</div>;
     }
-    const handleSwipe = (direction, workout) => {
+
+    const handleSwipe = async (direction, workout) => {
         if (direction === 'right') {
+            // Add to the daily routine in the frontend
             setDailyRoutine((prevRoutine) => [...prevRoutine, workout]);
+
+            // Send workout to the backend
+            try {
+                await axios.post('http://localhost:8001/workout-history', {
+                    user_id: currentUser.id, // Replace `currentUser.id` with your actual user ID variable
+                    workout_id: workout.id, // The workout ID
+                    workout_date: new Date().toISOString(), // Current date and time in ISO format
+                });
+            } catch (error) {
+                console.error('Error saving workout history:', error);
+            }
         }
+
+        // Reset UI elements after swipe
         setCurrentImageIndex(0);
         setIsInstructionsExpanded(false); // Reset instructions expansion state after swipe
     };
+
     const handleCardLeftScreen = (index) => {
         alreadyRemoved.current.push(workouts[index]);
         setCurrentIndex((prev) => (prev > 0 ? prev - 1 : workouts.length - 1));
     };
+
     const swipe = (direction) => {
         if (currentCardRef.current) {
             currentCardRef.current.swipe(direction);
         }
     };
+
     const getFormattedImageUrl = (path) => {
         return path.replace(/\\/g, '/').toLowerCase().replace(/ /g, '_');
     };
+
     const getFallbackImageUrl = (workout, index) => {
         const workoutName = workout.name.replace(/ /g, '_');
         return `http://localhost:8080/images/${workoutName}/images/${index}.jpg`;
     };
+
     const handleImageSwitch = (direction) => {
         setCurrentImageIndex((prevIndex) => {
             const totalImages = workouts[currentIndex]?.image_paths?.length || 2; // Default to 2 images
@@ -54,6 +76,7 @@ const SwipeCard = ({ workouts }) => {
             }
         });
     };
+
     const fetchInstructions = async (workoutId) => {
         try {
             if (instructions[workoutId]) return; // Skip if instructions are already fetched
@@ -71,6 +94,7 @@ const SwipeCard = ({ workouts }) => {
             }));
         }
     };
+
     return (
         <div className="swipe-container">
             <div className="card-stack">
@@ -151,4 +175,5 @@ const SwipeCard = ({ workouts }) => {
         </div>
     );
 };
+
 export default SwipeCard;

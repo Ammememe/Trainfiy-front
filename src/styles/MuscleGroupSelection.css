@@ -181,6 +181,32 @@
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
+.my-workouts-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.my-workouts-button {
+    background-color: #4B5563;
+    color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.my-workouts-button:hover {
+    background-color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+
 .timer-section.show {
     opacity: 1;
     height: auto;

@@ -55,6 +55,10 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
         navigate("/swipe");
     };
 
+    const handleMyWorkouts = () => {
+        navigate("/my-workouts");
+    };
+
     return (
         <div>
             <div className="video-banner">
@@ -131,6 +135,15 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
                         </button>
                     </div>
                 )}
+
+                <div className="my-workouts-container">
+                    <button
+                        onClick={handleMyWorkouts}
+                        className="my-workouts-button"
+                    >
+                        My Workouts
+                    </button>
+                </div>
             </div>
         </div>
     );
