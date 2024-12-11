@@ -1,10 +1,13 @@
-// src/Components/Login.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { loginAxios } from '../utils/axiosConfig';
 import '../styles/Login.css';
 
 const Login = ({ onLogin }) => {
+    const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
@@ -16,34 +19,61 @@ const Login = ({ onLogin }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        setError('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLoading) return;
 
         if (!isLogin && formData.password !== formData.confirmPassword) {
-            alert("Passwords do not match.");
+            setError("Passwords do not match.");
             return;
         }
 
-        const url = isLogin ? 'http://localhost:8001/login' : 'http://localhost:8001/register';
-        const payload = isLogin 
+        const endpoint = isLogin ? '/login' : '/register';
+        const payload = isLogin
             ? { email: formData.email, password: formData.password }
-            : { firstname: formData.firstname, lastname: formData.lastname, email: formData.email, password: formData.password };
+            : { 
+                firstname: formData.firstname, 
+                lastname: formData.lastname, 
+                email: formData.email, 
+                password: formData.password 
+              };
 
+        setIsLoading(true);
         try {
-            const response = await axios.post(url, payload);
-            const { token } = response.data;
+            const response = await loginAxios.post(endpoint, payload);
+            console.log('Auth response:', response.data);
+            
+            if (isLogin && response.data.token) {
+                try {
+                    const token = response.data.token;
+                    
+                    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+                    const userId = tokenPayload.userId;
 
-            if (isLogin && token) {
-                localStorage.setItem('token', token);
-                onLogin(token);
-            } else if (!isLogin) {
-                alert(response.data.message || "Account created successfully. Please log in.");
+                    if (!userId) {
+                        console.error('User ID not found in token payload:', tokenPayload);
+                        setError("Login successful but user ID not found. Please try again.");
+                        return;
+                    }
+
+                    await onLogin(token, userId);
+                    navigate('/home');
+                } catch (loginError) {
+                    console.error("Login error:", loginError);
+                    setError("Login successful but authentication failed. Please try again.");
+                }
+            } else if (!isLogin && response.data.message) {
+                setError(response.data.message || "Account created successfully. Please log in.");
                 setIsLogin(true);
             }
         } catch (error) {
-            alert(error.response?.data?.message || "An error occurred. Please try again.");
+            console.error("Request error:", error);
+            setError(error.response?.data?.message || "An error occurred. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -52,6 +82,7 @@ const Login = ({ onLogin }) => {
             <div className="login-container">
                 <div className="login-form-container">
                     <h2>{isLogin ? 'Login to Your Account' : 'Sign Up for Workout App'}</h2>
+                    {error && <div className="error-message">{error}</div>}
                     <form onSubmit={handleSubmit} className="login-form">
                         {!isLogin && (
                             <>
@@ -99,8 +130,12 @@ const Login = ({ onLogin }) => {
                                 required
                             />
                         )}
-                        <button type="submit" className={isLogin ? 'login-button' : 'signup-button'}>
-                            {isLogin ? 'Login' : 'Sign Up'}
+                        <button
+                            type="submit"
+                            className={isLogin ? 'login-button' : 'signup-button'}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Sign Up')}
                         </button>
                     </form>
                     {isLogin && <a href="/forgot-password" className="forgot-password">Forgot your password?</a>}
@@ -114,7 +149,10 @@ const Login = ({ onLogin }) => {
                         <li>Progress tracking</li>
                         <li>Exclusive content</li>
                     </ul>
-                    <button className="create-account-button" onClick={() => setIsLogin(false)}>
+                    <button className="create-account-button" onClick={() => {
+                        setIsLogin(false);
+                        setError('');
+                    }}>
                         Create an Account
                     </button>
                 </div>

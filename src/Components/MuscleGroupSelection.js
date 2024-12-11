@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginAxios, workoutsAxios } from '../utils/axiosConfig'; // Updated import
+import videos from '../config/videos';
 import '../styles/MuscleGroupSelection.css';
 
 const levels = ["beginner", "intermediate", "advanced"];
 const bodyParts = ["all", "chest", "arms", "back", "legs", "shoulders"];
-const videos = [
-    "/video/workout1.mp4",
-    "/video/workout2.mp4",
-    "/video/workout3.mp4",
-    "/video/workout4.mp4"
-];
 
 const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
     const videoRefs = useRef([]);
@@ -20,20 +16,87 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
     const [workoutDuration, setWorkoutDuration] = useState(30);
 
     useEffect(() => {
-        let currentIndex = 0;
-
-        const playNextVideo = () => {
-            videoRefs.current.forEach((video, index) => {
-                video.style.opacity = index === currentIndex ? "1" : "0";
-            });
-            videoRefs.current[currentIndex].play();
-            videoRefs.current[currentIndex].onended = () => {
-                currentIndex = (currentIndex + 1) % videos.length;
-                playNextVideo();
-            };
+        const verifyAuth = async () => {
+            try {
+                await loginAxios.get('/private/refreshtoken');  // Make sure this matches your backend endpoint
+            } catch (error) {
+                if (error.message !== 'Session expired') {
+                    console.error('Authentication error:', error);
+                    navigate('/login');  // Redirect to login on auth failure
+                }
+            }
         };
 
-        playNextVideo();
+        verifyAuth();
+    }, []);
+
+    useEffect(() => {
+        const loadVideos = async () => {
+            // Pre-load all videos
+            videoRefs.current.forEach((video, index) => {
+                if (video) {
+                    video.load();
+                }
+            });
+
+            // Start playing the first video
+            if (videoRefs.current[0]) {
+                try {
+                    videoRefs.current[0].style.opacity = "1";
+                    await videoRefs.current[0].play();
+                } catch (error) {
+                    console.error('Error playing first video:', error);
+                }
+            }
+        };
+
+        loadVideos();
+
+        // Cleanup
+        return () => {
+            videoRefs.current.forEach(video => {
+                if (video) {
+                    video.pause();
+                    video.removeAttribute('src');
+                    video.load();
+                }
+            });
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleVideoEnd = async (index) => {
+            const currentVideo = videoRefs.current[index];
+            const nextIndex = (index + 1) % videos.length;
+            const nextVideo = videoRefs.current[nextIndex];
+
+            if (currentVideo && nextVideo) {
+                currentVideo.style.opacity = "0";
+                await new Promise(resolve => setTimeout(resolve, 500));
+                nextVideo.style.opacity = "1";
+                try {
+                    await nextVideo.play();
+                } catch (error) {
+                    console.error('Error playing next video:', error);
+                }
+            }
+        };
+
+        // Add ended event listeners to all videos
+        videoRefs.current.forEach((video, index) => {
+            if (video) {
+                video.addEventListener('ended', () => handleVideoEnd(index));
+            }
+        });
+
+        // Cleanup
+        return () => {
+            videoRefs.current.forEach((video, index) => {
+                if (video) {
+                    video.removeEventListener('ended', () => handleVideoEnd(index));
+                }
+            });
+        };
     }, []);
 
     const handleLevelSelect = (level) => {
@@ -51,12 +114,26 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
         setShowTimer(true);
     };
 
-    const handleSeeWorkouts = () => {
-        navigate("/swipe");
+    const handleSeeWorkouts = async () => {
+        try {
+            await loginAxios.get('/private/refreshtoken'); // Use `loginAxios` for auth
+            navigate("/swipe");
+        } catch (error) {
+            if (error.message !== 'Session expired') {
+                console.error('Navigation error:', error);
+            }
+        }
     };
 
-    const handleMyWorkouts = () => {
-        navigate("/my-workouts");
+    const handleMyWorkouts = async () => {
+        try {
+            await loginAxios.get('/private/refreshtoken'); // Use `loginAxios` for auth
+            navigate("/my-workouts");
+        } catch (error) {
+            if (error.message !== 'Session expired') {
+                console.error('Navigation error:', error);
+            }
+        }
     };
 
     return (
@@ -71,9 +148,12 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
                             src={src}
                             className="background-video"
                             muted
-                            loop={false}
                             playsInline
-                        />
+                            preload="auto"
+                        >
+                            <source src={src} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
                     ))}
                 </div>
             </div>

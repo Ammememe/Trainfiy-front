@@ -98,7 +98,7 @@ const SummaryPage = () => {
     <div className="summary-container">
       <div className="hero-section">
         <div className="logo-container">
-          <h1 className="app-title">FitSwipe</h1>
+          <h1 className="app-title">SwipeToFit</h1>
           <p className="app-subtitle">Working out made simple and easy</p>
         </div>
       </div>
