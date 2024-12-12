@@ -14,7 +14,7 @@ const loginAxios = axios.create({
 });
 
 const workoutsAxios = axios.create({
-    baseURL: process.env.REACT_APP_WORKOUTS_API_URL,
+    baseURL: process.env.REACT_APP_WORKOUTS_API_URL || 'http://api.swipetofit.com',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
