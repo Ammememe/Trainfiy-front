@@ -31,7 +31,10 @@ const Login = ({ onLogin }) => {
             return;
         }
 
-        const endpoint = isLogin ? '/login' : '/register';
+        const endpoint = isLogin 
+    ? `${process.env.REACT_APP_API_URL || 'http://login.swipetofit.com'}/login` 
+    : `${process.env.REACT_APP_API_URL || 'http://login.swipetofit.com'}/register`;
+
         const payload = isLogin
             ? { email: formData.email, password: formData.password }
             : { 
