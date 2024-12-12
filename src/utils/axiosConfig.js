@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 // Create axios instances with updated configurations
 const loginAxios = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: process.env.REACT_APP_API_URL || 'http://login.swipetofit.com', // Ensure baseURL is defined
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
