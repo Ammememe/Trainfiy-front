@@ -16,6 +16,24 @@ const Login = ({ onLogin }) => {
         confirmPassword: ''
     });
 
+    const getEndpoint = (path) => {
+        const prodUrl = 'http://login.swipetofit.com';
+        const devUrl = 'http://localhost:3000';
+        
+        // Try environment variable first
+        if (process.env.REACT_APP_API_URL) {
+            return `${process.env.REACT_APP_API_URL}/${path}`;
+        }
+
+        // Try production URL
+        try {
+            return `${window.location.hostname.includes('localhost') ? devUrl : prodUrl}/${path}`;
+        } catch (error) {
+            console.warn('Error determining environment:', error);
+            return `${prodUrl}/${path}`; // Fallback to production
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -31,10 +49,7 @@ const Login = ({ onLogin }) => {
             return;
         }
 
-        const endpoint = isLogin 
-    ? `${process.env.REACT_APP_API_URL || 'http://login.swipetofit.com'}/login` 
-    : `${process.env.REACT_APP_API_URL || 'http://login.swipetofit.com'}/register`;
-
+        const endpoint = getEndpoint(isLogin ? 'login' : 'register');
         const payload = isLogin
             ? { email: formData.email, password: formData.password }
             : { 
