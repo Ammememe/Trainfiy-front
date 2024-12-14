@@ -2,19 +2,29 @@ import axios from 'axios';
 import { checkTokenExpiration } from './auth';
 import { toast } from 'react-toastify';
 
+// Function to determine the appropriate base URL
+const getBaseUrl = (defaultUrl) => {
+    if (process.env.REACT_APP_API_URL) {
+        return process.env.REACT_APP_API_URL;
+    }
+    return window.location.hostname.includes('localhost') 
+        ? 'http://localhost:3000' 
+        : defaultUrl;
+};
+
 // Create axios instances with updated configurations
 const loginAxios = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://login.swipetofit.com', // Ensure baseURL is defined
+    baseURL: getBaseUrl('http://login.swipetofit.com'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-     withCredentials: true,
+    withCredentials: true,
     credentials: 'include'
 });
 
 const workoutsAxios = axios.create({
-    baseURL: process.env.REACT_APP_WORKOUTS_API_URL || 'http://api.swipetofit.com',
+    baseURL: getBaseUrl('http://api.swipetofit.com'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
