@@ -19,8 +19,7 @@ const loginAxios = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: true,
-    credentials: 'include'
+    withCredentials: true  // Remove credentials: 'include'
 });
 
 const workoutsAxios = axios.create({
@@ -29,13 +28,13 @@ const workoutsAxios = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: true,
+    withCredentials: true
 });
 
 // Request interceptor with error logging
 const requestInterceptor = async (config) => {
-    // Add CORS headers
-    config.headers['Access-Control-Allow-Credentials'] = true;
+    // Remove the CORS header setting as it should be handled by the server
+    // config.headers['Access-Control-Allow-Credentials'] = true;
     
     // Check token expiration
     if (checkTokenExpiration()) {
