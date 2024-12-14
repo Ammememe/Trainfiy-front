@@ -8,7 +8,7 @@ const getBaseUrl = (defaultUrl) => {
         return process.env.REACT_APP_API_URL;
     }
     return window.location.hostname.includes('localhost') 
-        ? 'http://localhost:3000' 
+        ? 'http://localhost:8001' 
         : defaultUrl;
 };
 
