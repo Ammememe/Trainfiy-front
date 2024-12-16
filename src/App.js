@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -21,6 +22,39 @@ function App() {
     const [muscleGroups, setMuscleGroups] = useState([]);
     const [levels, setLevels] = useState([]);
     const [error, setError] = useState(null);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // Initial setup - only runs once
+    useEffect(() => {
+        const initializeApp = async () => {
+            const token = localStorage.getItem('token');
+            if (token && !checkTokenExpiration()) {
+                setIsLoggedIn(true);
+                try {
+                    await loginAxios.get('/private/refreshtoken');
+                    
+                    const [levelsRes, muscleGroupsRes] = await Promise.all([
+                        workoutsAxios.get('/levels'),
+                        workoutsAxios.get('/muscleGroups')
+                    ]);
+                    
+                    setLevels(levelsRes.data.levels);
+                    setMuscleGroups(muscleGroupsRes.data.muscleGroups);
+                    setError(null);
+                } catch (error) {
+                    console.error("Initialization error:", error);
+                    if (error.response?.status === 401) {
+                        handleSessionExpired();
+                    } else {
+                        setError("Failed to initialize application");
+                    }
+                }
+            }
+            setIsInitialized(true);
+        };
+
+        initializeApp();
+    }, []);
 
     // Check token expiration periodically
     useEffect(() => {
@@ -31,83 +65,30 @@ function App() {
         };
 
         const sessionInterval = setInterval(checkSession, 60000);
-        window.addEventListener('focus', checkSession);
-
-        return () => {
-            clearInterval(sessionInterval);
-            window.removeEventListener('focus', checkSession);
-        };
+        return () => clearInterval(sessionInterval);
     }, [isLoggedIn]);
 
-    // Initial token check
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token && !checkTokenExpiration()) {
-            setIsLoggedIn(true);
-        }
-    }, []);
-
-    // Fetch levels
-    useEffect(() => {
-        if (isLoggedIn) {
-            const fetchLevels = async () => {
-                try {
-                    setLoading(true);
-                    const response = await workoutsAxios.get('/levels');
-                    setLevels(response.data.levels);
-                    setError(null);
-                } catch (error) {
-                    console.error("Error fetching levels:", error);
-                    setError("Failed to load exercise levels");
-                } finally {
-                    setLoading(false);
+    const fetchWorkouts = async () => {
+        if (!level || !bodyPart) return;
+        
+        try {
+            setLoading(true);
+            const response = await workoutsAxios.get('/workouts', {
+                params: { 
+                    level, 
+                    primaryMuscles: bodyPart,
+                    sessionID: localStorage.getItem('user_id')
                 }
-            };
-            fetchLevels();
+            });
+            setWorkouts(response.data.workouts || []);
+            setError(null);
+        } catch (error) {
+            console.error("Error fetching workouts:", error);
+            setError("Failed to load workouts");
+        } finally {
+            setLoading(false);
         }
-    }, [isLoggedIn]);
-
-    // Fetch muscle groups
-    useEffect(() => {
-        if (isLoggedIn) {
-            const fetchMuscleGroups = async () => {
-                try {
-                    setLoading(true);
-                    const response = await workoutsAxios.get('/muscleGroups');
-                    setMuscleGroups(response.data.muscleGroups);
-                    setError(null);
-                } catch (error) {
-                    console.error("Error fetching muscle groups:", error);
-                    setError("Failed to load muscle groups");
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchMuscleGroups();
-        }
-    }, [isLoggedIn]);
-
-    // Fetch workouts when level or body part is selected
-    useEffect(() => {
-        if (isLoggedIn && level && bodyPart) {
-            const fetchWorkouts = async () => {
-                try {
-                    setLoading(true);
-                    const response = await workoutsAxios.get('/workouts', {
-                        params: { level, primaryMuscles: bodyPart }
-                    });
-                    setWorkouts(response.data.workouts);
-                    setError(null);
-                } catch (error) {
-                    console.error("Error fetching workouts:", error);
-                    setError("Failed to load workouts");
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchWorkouts();
-        }
-    }, [level, bodyPart, isLoggedIn]);
+    };
 
     const handleSessionExpired = () => {
         localStorage.removeItem('token');
@@ -138,6 +119,10 @@ function App() {
         setError(null);
     };
 
+    if (!isInitialized) {
+        return <div className="loading">Initializing...</div>;
+    }
+
     return (
         <Router>
             <div className="App">
@@ -160,16 +145,13 @@ function App() {
                     } />
                     <Route path="/home" element={
                         isLoggedIn ? (
-                            loading ? (
-                                <div className="loading">Loading...</div>
-                            ) : (
-                                <MuscleGroupSelector
-                                    onSelectBodyPart={setBodyPart}
-                                    onSelectLevel={setLevel}
-                                    muscleGroups={muscleGroups}
-                                    levels={levels}
-                                />
-                            )
+                            <MuscleGroupSelector
+                                onSelectBodyPart={setBodyPart}
+                                onSelectLevel={setLevel}
+                                selectedLevel={level}
+                                selectedBodyPart={bodyPart}
+                                onPrepareForSwipe={fetchWorkouts}
+                            />
                         ) : (
                             <Navigate to="/login" replace />
                         )

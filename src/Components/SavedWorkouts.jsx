@@ -33,21 +33,13 @@ const SavedWorkouts = ({ currentUser }) => {
         return `https://myexercisesbucket.s3.us-east-1.amazonaws.com/public/${workoutName}/images/${index}.jpg`;
     };
 
-    const handleImageSwitch = (workoutId, direction) => {
+    const handleImageSwitch = (workoutId) => {
         setCurrentImageIndexes((prev) => {
             const currentIndex = prev[workoutId] || 0;
-            const totalImages = 2;
-            if (direction === 'left') {
-                return {
-                    ...prev,
-                    [workoutId]: currentIndex === 0 ? totalImages - 1 : currentIndex - 1,
-                };
-            } else {
-                return {
-                    ...prev,
-                    [workoutId]: (currentIndex + 1) % totalImages,
-                };
-            }
+            return {
+                ...prev,
+                [workoutId]: currentIndex === 0 ? 1 : 0
+            };
         });
     };
 
@@ -89,44 +81,37 @@ const SavedWorkouts = ({ currentUser }) => {
         });
     };
 
-    const WorkoutCard = ({ workout }) => (
-        <div className="workout-card">
-            <button 
-                className="delete-workout-btn"
-                onClick={() => setWorkoutToDelete(workout)}
-            >
-                ✕
-            </button>
-            <div className="workout-image-container">
-                <div className="image-navigation">
-                    <button onClick={() => handleImageSwitch(workout.history_id, 'left')}>
-                        &#8592;
-                    </button>
-                    <button onClick={() => handleImageSwitch(workout.history_id, 'right')}>
-                        &#8594;
+    const WorkoutCard = ({ workout }) => {
+        return (
+            <div className="workout-card">
+                <button 
+                    className="delete-workout-btn"
+                    onClick={() => setWorkoutToDelete(workout)}
+                >
+                    ✕
+                </button>
+                <div className="workout-image-container">
+                    <div
+                        className="saved-workout-image"
+                        style={{
+                            backgroundImage: `url(${getFallbackImageUrl(workout, currentImageIndexes[workout.history_id] || 0)})`,
+                        }}
+                        onClick={() => handleImageSwitch(workout.history_id)}
+                    />
+                </div>
+                <div className="workout-details">
+                    <h4>{workout.name}</h4>
+                    <p className="workout-time">{formatDate(workout.workout_date)}</p>
+                    <button
+                        onClick={() => setSelectedWorkout(workout)}
+                        className="view-details-btn"
+                    >
+                        View Details
                     </button>
                 </div>
-                <div
-                    className="workout-image"
-                    style={{
-                        backgroundImage: `url(${getFallbackImageUrl(workout, currentImageIndexes[workout.history_id] || 0)})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                />
             </div>
-            <div className="workout-details">
-                <h4>{workout.name}</h4>
-                <p className="workout-time">{formatDate(workout.workout_date)}</p>
-                <button
-                    onClick={() => setSelectedWorkout(workout)}
-                    className="view-details-btn"
-                >
-                    View Details
-                </button>
-            </div>
-        </div>
-    );
+        );
+    };
 
     const WorkoutGroup = ({ title, workouts, showDeleteAll = true }) => {
         const date = workouts.length > 0 

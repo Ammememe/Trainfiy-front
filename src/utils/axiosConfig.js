@@ -3,27 +3,30 @@ import { checkTokenExpiration } from './auth';
 import { toast } from 'react-toastify';
 
 // Function to determine the appropriate base URL
-const getBaseUrl = (defaultUrl) => {
-    if (process.env.REACT_APP_API_URL) {
-        return process.env.REACT_APP_API_URL;
+const getBaseUrl = (defaultUrl, type = 'auth') => {
+    if (type === 'auth') {
+        if (process.env.REACT_APP_API_URL) {
+            return process.env.REACT_APP_API_URL;
+        }
+        return 'http://login.swipetofit.com';
+    } else {
+        // For workout API endpoints, always use api.swipetofit.com
+        return 'http://api.swipetofit.com';
     }
-    return window.location.hostname.includes('localhost') 
-        ? 'http://localhost:8001' 
-        : defaultUrl;
 };
 
 // Create axios instances with updated configurations
 const loginAxios = axios.create({
-    baseURL: getBaseUrl('http://login.swipetofit.com'),
+    baseURL: getBaseUrl('http://login.swipetofit.com', 'auth'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: true  // Remove credentials: 'include'
+    withCredentials: true
 });
 
 const workoutsAxios = axios.create({
-    baseURL: getBaseUrl('http://api.swipetofit.com'),
+    baseURL: getBaseUrl('http://api.swipetofit.com', 'api'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -33,9 +36,6 @@ const workoutsAxios = axios.create({
 
 // Request interceptor with error logging
 const requestInterceptor = async (config) => {
-    // Remove the CORS header setting as it should be handled by the server
-    // config.headers['Access-Control-Allow-Credentials'] = true;
-    
     // Check token expiration
     if (checkTokenExpiration()) {
         localStorage.removeItem('token');

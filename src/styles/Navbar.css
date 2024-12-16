@@ -1,76 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* Navbar Container */
 .navbar {
     display: flex;
-    justify-content: space-between; /* Distribute space between items */
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 16px 24px;
     position: fixed;
     top: 0;
-    left: 50%; /* Position relative to the center of the screen */
-    transform: translateX(-50%); /* Center-align by shifting half its width */
-    max-width: 800px; /* Limit width to avoid stretching across entire screen */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1200px;
     width: 100%;
-    color: white;
-    z-index: 10;
-    
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Logo styling */
 .navbar-logo {
-    font-size: 1.5em;
-    font-weight: bold;
-    cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e40af;
+    text-decoration: none;
+    letter-spacing: -0.025em;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-logo:hover {
+    color: #3b82f6;
+    transform: translateY(-1px);
 }
 
 /* Link styling */
 .navbar-links {
     display: flex;
-    gap: 20px;
+    gap: 24px;
+    align-items: center;
 }
 
 .navbar-link {
-    font-size: 1em;
-    color: white;
+    position: relative;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1e3a8a;
     text-decoration: none;
-    cursor: pointer;
-    transition: color 0.3s;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #3b82f6;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-link:hover {
-    color: #ccc; /* Optional: Lighten color on hover */
+    color: #3b82f6;
+}
+
+.navbar-link:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 /* Mobile hamburger menu */
 .navbar-toggle {
     display: none;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.bar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 4px 0;
+    background-color: #1e3a8a;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 768px) {
-    .navbar-links {
-        display: none;
-        flex-direction: column;
-        gap: 10px;
-        position: absolute;
-        top: 50px;
-        right: 20px;
-        background-color: rgba(0, 0, 0, 0.8);
-        padding: 10px;
-        border-radius: 8px;
+    .navbar {
+        padding: 12px 16px;
     }
+
+    .navbar-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 250px;
+        flex-direction: column;
+        gap: 16px;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 80px 24px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
     .navbar-links.open {
-        display: flex;
+        right: 0;
+    }
+
+    .navbar-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .navbar-link:hover {
+        background-color: #f0f7ff;
     }
 
     .navbar-toggle {
         display: block;
-        cursor: pointer;
+        z-index: 20;
     }
 
-    .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 4px;
-        background-color: white;
+    .navbar-toggle:hover {
+        background-color: #f0f7ff;
+    }
+
+    .navbar-toggle.open .bar:first-child {
+        transform: translateY(6px) rotate(45deg);
+        background-color: #3b82f6;
+    }
+
+    .navbar-toggle.open .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .navbar-toggle.open .bar:last-child {
+        transform: translateY(-6px) rotate(-45deg);
+        background-color: #3b82f6;
     }
 }

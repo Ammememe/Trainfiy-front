@@ -18,29 +18,43 @@ const items: CarouselItem[] = [
 
 const Carousel = () => {
   const [offset, setOffset] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+  const lastTimeRef = useRef<number>(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOffset((prevOffset) => prevOffset + (isHovering ? 0.5 : 1.5)); // Slower when hovering
-    }, 16); // 60fps
-
-    return () => clearInterval(interval);
-  }, [isHovering]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const itemWidth = 200 + 16; // width + gap
-    const totalItems = items.length;
-
-    // If we've scrolled past the first set of items, reset without a visible rewind
-    if (offset > itemWidth * totalItems) {
-      setOffset(0);
+  // Optimize animation using requestAnimationFrame
+  const animate = (currentTime: number) => {
+    if (!lastTimeRef.current) lastTimeRef.current = currentTime;
+    const deltaTime = currentTime - lastTimeRef.current;
+    
+    if (deltaTime >= 16) { // Limit to ~60fps
+      setOffset(prevOffset => {
+        const itemWidth = 200 + 16; // width + gap
+        const totalWidth = itemWidth * items.length;
+        const newOffset = prevOffset + (isPaused ? 0.5 : 1);
+        
+        // Reset when reaching the end
+        return newOffset > totalWidth ? 0 : newOffset;
+      });
+      lastTimeRef.current = currentTime;
     }
-  }, [offset]);
+    
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused]);
+
+  // Use transform3d for hardware acceleration
+  const getTransform = () => `translate3d(-${offset}px, 0, 0)`;
 
   return (
     <div className="carousel-container">
@@ -61,23 +75,30 @@ const Carousel = () => {
       <div
         className="carousel-row"
         ref={containerRef}
-        onMouseEnter={() => setIsHovering(true)} // Detect hover
-        onMouseLeave={() => setIsHovering(false)} // Detect when hover ends
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
         <div
           className="carousel-items"
           style={{
-            transform: `translateX(-${offset}px)`,
+            transform: getTransform(),
+            willChange: 'transform'
           }}
         >
-          {/* Duplicate items to create the infinite loop illusion */}
           {[...items, ...items].map((item, index) => (
-            <div key={index} className="carousel-item">
+            <div 
+              key={index} 
+              className="carousel-item"
+              style={{ willChange: 'transform' }}
+            >
               <div className="carousel-image-container">
                 <img
                   src={item.image}
                   alt={item.title}
                   className="carousel-image"
+                  loading="lazy"
                 />
               </div>
               <h3 className="carousel-item-title">{item.title}</h3>

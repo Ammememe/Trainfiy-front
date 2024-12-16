@@ -6,25 +6,8 @@ import { Check, X, RotateCcw } from 'lucide-react';
 import TimerAnimation from './TimerAnimation.tsx';
 import Carousel from './Carousel.tsx';
 
-
-
-
-
-
-
-
-const fitnessImages = [
-  "/public/gym1.jpg",
-  "/public/gym1.jpg",
-  "/public/gym1.jpg",
-  "/public/gym1.jpg",
-  "/public/gym1.jpg",
-];
-
 const SummaryPage = () => {
-  const [currentIndex, setCurrentIndex] = useState(2);
-  const currentIndexRef = useRef(currentIndex);
-  
+  // Define slides first
   const summarySlides = [
     {
       id: 1,
@@ -42,18 +25,36 @@ const SummaryPage = () => {
       text: "Create your perfect workout in seconds"
     }
   ];
+  
+  // Initialize state with the last index to show first slide on top
+  const [currentIndex, setCurrentIndex] = useState(summarySlides.length - 1);
+  const currentIndexRef = useRef(currentIndex);
+  const [api, setApi] = React.useState();
+
+  const childRefs = useMemo(
+    () =>
+      Array(summarySlides.length)
+        .fill(0)
+        .map(() => React.createRef()),
+    [summarySlides.length]
+  );
+
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
     currentIndexRef.current = val;
   };
+
   const canGoBack = currentIndex < summarySlides.length - 1;
   const canSwipe = currentIndex >= 0;
+
   const swiped = (direction, index) => {
     updateCurrentIndex(index - 1);
   };
+
   const outOfFrame = (idx) => {
     currentIndexRef.current >= idx && updateCurrentIndex(idx - 1);
   };
+
   const swipe = async (dir) => {
     if (canSwipe && currentIndex < summarySlides.length) {
       const ref = childRefs[currentIndex].current;
@@ -62,6 +63,7 @@ const SummaryPage = () => {
       }
     }
   };
+
   const goBack = async () => {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
@@ -71,25 +73,18 @@ const SummaryPage = () => {
       await ref.restoreCard();
     }
   };
-  const childRefs = useMemo(
-    () =>
-      Array(summarySlides.length)
-        .fill(0)
-        .map(() => React.createRef()),
-    []
-  );
+
   const handleDragStart = (e) => {
     e.preventDefault();
     return false;
   };
-  const [api, setApi] = React.useState();
-  
+
   useEffect(() => {
     if (!api) return;
 
     const interval = setInterval(() => {
       api.scrollNext();
-    }, 3000); // Scroll every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [api]);
@@ -106,25 +101,24 @@ const SummaryPage = () => {
       <div className="features-section">
         <div className="feature-card">
           <div className="feature-icon">
-          
             <Dumbbell className="icon" />
           </div>
           <h3>Personalized Workouts</h3>
-          <p>Choose from over 500 exercises with high-quality animations</p>
+          <p>Hundreds of different exercises to choose from by just swiping</p>
         </div>
         <div className="feature-card">
           <div className="feature-icon">
             <Heart className="icon" />
           </div>
-          <h3>Track Progress</h3>
-          <p>Monitor your fitness journey and celebrate achievements</p>
+          <h3>Saved Workouts</h3>
+          <p>Did you like your previous workout session? Great because they're saved in your account</p>
         </div>
         <div className="feature-card">
           <div className="feature-icon">
             <Brain className="icon" />
           </div>
-          <h3>Smart Recommendations</h3>
-          <p>Get workout suggestions based on your goals and level</p>
+          <h3>Choose your level</h3>
+          <p>Doesn't matter if you're a beginner or intermediate, it's for everyone.</p>
         </div>
       </div>
 
@@ -156,7 +150,7 @@ const SummaryPage = () => {
               ))}
             </div>
             
-            <div className="button-container">
+            <div className="button-container-SP">
               <button 
                 onClick={() => swipe('left')} 
                 disabled={!canSwipe}
@@ -188,11 +182,11 @@ const SummaryPage = () => {
           </div>
         </div>
       </div>
+
       <div className="cta-section" style={{ backgroundColor: '#f3f3f3' }}>
-  <h2>Ready to start your fitness journey?</h2>
-  
-  <Carousel />
-</div>
+        <h2>Ready to start your fitness journey?</h2>
+        <Carousel />
+      </div>
     </div>
   );
 };

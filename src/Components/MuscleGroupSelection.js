@@ -1,45 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginAxios, workoutsAxios } from '../utils/axiosConfig'; // Updated import
 import videos from '../config/videos';
 import '../styles/MuscleGroupSelection.css';
 
 const levels = ["beginner", "intermediate", "advanced"];
 const bodyParts = ["all", "chest", "arms", "back", "legs", "shoulders"];
 
-const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
+const MuscleGroupSelector = ({ 
+    onSelectBodyPart, 
+    onSelectLevel,
+    selectedLevel,
+    selectedBodyPart,
+    onPrepareForSwipe
+}) => {
     const videoRefs = useRef([]);
     const navigate = useNavigate();
-    const [selectedLevel, setSelectedLevel] = useState(null);
-    const [selectedBodyPart, setSelectedBodyPart] = useState(null);
     const [showTimer, setShowTimer] = useState(false);
     const [workoutDuration, setWorkoutDuration] = useState(30);
 
     useEffect(() => {
-        const verifyAuth = async () => {
-            try {
-                await loginAxios.get('/private/refreshtoken');  // Make sure this matches your backend endpoint
-            } catch (error) {
-                if (error.message !== 'Session expired') {
-                    console.error('Authentication error:', error);
-                    navigate('/login');  // Redirect to login on auth failure
-                }
-            }
-        };
-
-        verifyAuth();
-    }, []);
-
-    useEffect(() => {
         const loadVideos = async () => {
-            // Pre-load all videos
-            videoRefs.current.forEach((video, index) => {
+            videoRefs.current.forEach(video => {
                 if (video) {
                     video.load();
                 }
             });
 
-            // Start playing the first video
             if (videoRefs.current[0]) {
                 try {
                     videoRefs.current[0].style.opacity = "1";
@@ -52,7 +38,6 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
 
         loadVideos();
 
-        // Cleanup
         return () => {
             videoRefs.current.forEach(video => {
                 if (video) {
@@ -82,14 +67,12 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
             }
         };
 
-        // Add ended event listeners to all videos
         videoRefs.current.forEach((video, index) => {
             if (video) {
                 video.addEventListener('ended', () => handleVideoEnd(index));
             }
         });
 
-        // Cleanup
         return () => {
             videoRefs.current.forEach((video, index) => {
                 if (video) {
@@ -100,7 +83,6 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
     }, []);
 
     const handleLevelSelect = (level) => {
-        setSelectedLevel(level);
         onSelectLevel(level);
     };
 
@@ -109,31 +91,21 @@ const MuscleGroupSelector = ({ onSelectBodyPart, onSelectLevel }) => {
             alert("Please select a level first!");
             return;
         }
-        setSelectedBodyPart(bodyPart);
         onSelectBodyPart(bodyPart);
         setShowTimer(true);
     };
 
     const handleSeeWorkouts = async () => {
         try {
-            await loginAxios.get('/private/refreshtoken'); // Use `loginAxios` for auth
-            navigate("/swipe");
+            await onPrepareForSwipe();
+            navigate('/swipe');
         } catch (error) {
-            if (error.message !== 'Session expired') {
-                console.error('Navigation error:', error);
-            }
+            console.error('Error preparing workouts:', error);
         }
     };
 
-    const handleMyWorkouts = async () => {
-        try {
-            await loginAxios.get('/private/refreshtoken'); // Use `loginAxios` for auth
-            navigate("/my-workouts");
-        } catch (error) {
-            if (error.message !== 'Session expired') {
-                console.error('Navigation error:', error);
-            }
-        }
+    const handleMyWorkouts = () => {
+        navigate('/my-workouts');
     };
 
     return (

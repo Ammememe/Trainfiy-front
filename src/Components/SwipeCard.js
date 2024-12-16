@@ -188,21 +188,17 @@ const SwipeCard = ({ workouts, currentUser }) => {
                             ref={currentCardRef}
                         >
                             <div className="card-content">
-                                <div className="image-navigation">
-                                    <button onClick={() => handleImageSwitch("left")}>&#8592;</button>
-                                    <button onClick={() => handleImageSwitch("right")}>&#8594;</button>
-                                </div>
-                                <div
-                                    className="workout-image"
-                                    style={{
-                                        backgroundImage: workout.image_paths && workout.image_paths[currentImageIndex]
-                                            ? `url(${getFormattedImageUrl(workout.image_paths[currentImageIndex])})`
-                                            : `url(${getFallbackImageUrl(workout, currentImageIndex)})`,
-                                    }}
-                                />
+    <div
+        className="workout-image"
+        style={{
+            backgroundImage: workout.image_paths && workout.image_paths[currentImageIndex]
+                ? `url(${getFormattedImageUrl(workout.image_paths[currentImageIndex])})`
+                : `url(${getFallbackImageUrl(workout, currentImageIndex)})`,
+        }}
+        onClick={() => setCurrentImageIndex(prevIndex => prevIndex === 0 ? 1 : 0)}
+    />
                                 <div className="workout-title">{workout.name}</div>
-                                <div className="workout-description">Target: {workout.primary_muscles}</div>
-                                <div className="workout-equipment">Equipment: {workout.equipment}</div>
+
                                 <div className="instructions-section">
                                     <div
                                         className="instructions-title"

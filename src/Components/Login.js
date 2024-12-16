@@ -18,7 +18,7 @@ const Login = ({ onLogin }) => {
 
     const getEndpoint = (path) => {
         const prodUrl = 'http://login.swipetofit.com';
-        const devUrl = 'http://localhost:3000';
+        const devUrl = 'http://localhost:8001';
         
         // Try environment variable first
         if (process.env.REACT_APP_API_URL) {
