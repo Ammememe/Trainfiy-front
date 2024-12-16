@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
     });
 
     const getEndpoint = (path) => {
-        const prodUrl = 'http://login.swipetofit.com';
+        const prodUrl = 'https://login.swipetofit.com';
         const devUrl = 'http://localhost:8001';
         
         // Try environment variable first
