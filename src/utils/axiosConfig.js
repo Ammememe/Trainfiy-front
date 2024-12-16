@@ -8,16 +8,16 @@ const getBaseUrl = (defaultUrl, type = 'auth') => {
         if (process.env.REACT_APP_API_URL) {
             return process.env.REACT_APP_API_URL;
         }
-        return 'http://login.swipetofit.com';
+        return 'https://login.swipetofit.com';
     } else {
         // For workout API endpoints, always use api.swipetofit.com
-        return 'http://api.swipetofit.com';
+        return 'https://api.swipetofit.com';
     }
 };
 
 // Create axios instances with updated configurations
 const loginAxios = axios.create({
-    baseURL: getBaseUrl('http://login.swipetofit.com', 'auth'),
+    baseURL: getBaseUrl('https://login.swipetofit.com', 'auth'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -26,7 +26,7 @@ const loginAxios = axios.create({
 });
 
 const workoutsAxios = axios.create({
-    baseURL: getBaseUrl('http://api.swipetofit.com', 'api'),
+    baseURL: getBaseUrl('https://api.swipetofit.com', 'api'),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
